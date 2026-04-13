@@ -7,6 +7,7 @@ from typing import Any, Dict, List
 
 import joblib
 import numpy as np
+import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
 
 
@@ -31,8 +32,12 @@ class NetworkMLModel:
         return self.model.predict_proba(X)
 
     def predict_single(self, row, labels: List[str]) -> Dict[str, Any]:
-        pred_idx = int(self.model.predict(row)[0])
-        probabilities = self.model.predict_proba(row)[0]
+        prepared_row = row
+        if isinstance(row, np.ndarray) and hasattr(self.model, "feature_names_in_"):
+            prepared_row = pd.DataFrame(row, columns=self.model.feature_names_in_)
+
+        pred_idx = int(self.model.predict(prepared_row)[0])
+        probabilities = self.model.predict_proba(prepared_row)[0]
         confidence = float(np.max(probabilities))
         return {
             "diagnosis": labels[pred_idx],

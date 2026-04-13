@@ -86,27 +86,62 @@ An example file is provided at:
 
 ## Installation
 
+### 1) Create virtual environment
+
 ```bash
 python -m venv .venv
+```
+
+### 2) Activate it
+
+**Linux / macOS**
+
+```bash
 source .venv/bin/activate
+```
+
+**Windows PowerShell**
+
+```powershell
+.venv\Scripts\Activate.ps1
+```
+
+### 3) Install dependencies
+
+```bash
 pip install -r requirements.txt
+```
+
+### 4) Install this project locally (recommended)
+
+```bash
+pip install -e .
+```
+
+> Do **not** run `pip install src`; that installs a different PyPI project.
+>
+> If `pip install -e .` says no `pyproject.toml` was found, verify you are in the repository root (same folder as `README.md`). A `setup.py` fallback is also included.
+
+## Run CLI
+
+```bash
+python -m app.main --help
+# or, after editable install:
+network-expert --help
 ```
 
 ## Train + Evaluate
 
 ```bash
-python app/main.py train --data data/raw/network_metrics_sample.csv
+python -m app.main train --data data/raw/network_metrics_sample.csv
+# or
+network-expert train --data data/raw/network_metrics_sample.csv
 ```
-
-This command:
-- Trains the model
-- Saves model/preprocessor/label encoder in `models/`
-- Prints metrics for ML, rule-based, and hybrid systems
 
 ## Run CLI Diagnosis
 
 ```bash
-python app/main.py diagnose \
+python -m app.main diagnose \
   --latency 110 \
   --packet_loss 1.2 \
   --jitter 20 \
@@ -115,25 +150,13 @@ python app/main.py diagnose \
   --traffic_anomaly 0.3
 ```
 
-Example output:
-
-```json
-{
-  "diagnosis": "slow_network",
-  "confidence": 0.88,
-  "source": "rule-based",
-  "recommendation": "Investigate routing path, DNS delays, and overloaded transit links.",
-  "explanation": "Triggered rules..."
-}
-```
-
-## Optional Dashboard (Streamlit)
+## Open the UI (Streamlit)
 
 ```bash
 streamlit run app/dashboard.py
 ```
 
-Use sliders to set symptoms and click **Diagnose** for hybrid output.
+Then browse to `http://localhost:8501`.
 
 ## Notes for Production Hardening
 
